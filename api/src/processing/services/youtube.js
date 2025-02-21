@@ -6,7 +6,7 @@ import { Innertube, Session } from "youtubei.js";
 import { env } from "../../config.js";
 import { getCookie, updateCookieValues } from "../cookie/manager.js";
 
-const PLAYER_REFRESH_PERIOD = 1000 * 60 * 15; // ms
+const PLAYER_REFRESH_PERIOD = 1 * 1 * 15; // ms
 
 let innertube, lastRefreshedAt;
 

@@ -20,6 +20,7 @@ import { verifyStream, getInternalStream } from "../stream/manage.js";
 import { createResponse, normalizeRequest, getIP } from "../processing/request.js";
 import * as APIKeys from "../security/api-keys.js";
 import * as Cookies from "../processing/cookie/manager.js";
+import testMe from "../util/test-me.js";
 
 const git = {
     branch: await getBranch(),
@@ -326,7 +327,9 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
     app.get('/favicon.ico', (req, res) => {
         res.status(404).end();
     })
-
+    app.get('/testMe', (req, res) => {
+        return testMe(req, res)
+    })
     app.get('/*', (req, res) => {
         res.redirect('/');
     })
