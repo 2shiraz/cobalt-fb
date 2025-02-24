@@ -23,7 +23,7 @@ async function* readChunks(streamInfo, size) {
             maxRedirections: 4
         });
 
-        if (chunk.statusCode === 403 && chunksSinceTransplant >= 3 && streamInfo.transplant) {
+        if (chunk.statusCode === 403 && chunksSinceTransplant >= 0 && streamInfo.transplant) {
             chunksSinceTransplant = 0;
             try {
                 await streamInfo.transplant(streamInfo.dispatcher);
