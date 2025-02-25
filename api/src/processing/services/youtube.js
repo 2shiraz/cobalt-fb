@@ -74,7 +74,7 @@ const cloneInnertube = async (customFetch) => {
     if (!innertube || shouldRefreshPlayer) {
         innertube = await Innertube.create({
             fetch: customFetch,
-            retrieve_player: !!cookie,
+            retrieve_player: true,
             cookie,
             po_token: rawCookieValues?.po_token,
             visitor_data: rawCookieValues?.visitor_data,
@@ -149,7 +149,7 @@ export default async function (o) {
         useHLS = false;
     }
 
-    let innertubeClient = o.innertubeClient || "ANDROID";
+    let innertubeClient = "WEB_EMBEDDED";
 
     if (cookie) {
         useHLS = false;
@@ -474,7 +474,7 @@ export default async function (o) {
             urls = audio.uri;
         }
 
-        if (innertubeClient === "WEB" && innertube) {
+        if (innertubeClient === "WEB_EMBEDDED" && innertube) {
             urls = audio.decipher(innertube.session.player);
         }
 
@@ -509,7 +509,7 @@ export default async function (o) {
             filenameAttributes.resolution = `${video.width}x${video.height}`;
             filenameAttributes.extension = codecList[codec].container;
 
-            if (innertubeClient === "WEB" && innertube) {
+            if (innertubeClient === "WEB_EMBEDDED" && innertube) {
                 video = video.decipher(innertube.session.player);
                 audio = audio.decipher(innertube.session.player);
             } else {
