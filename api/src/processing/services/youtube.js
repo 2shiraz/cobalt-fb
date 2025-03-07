@@ -74,7 +74,7 @@ const cloneInnertube = async (customFetch) => {
     if (!innertube || shouldRefreshPlayer) {
         innertube = await Innertube.create({
             fetch: customFetch,
-            retrieve_player: true,
+            retrieve_player: false,
             cookie,
             po_token: rawCookieValues?.po_token,
             visitor_data: rawCookieValues?.visitor_data,
@@ -149,7 +149,7 @@ export default async function (o) {
         useHLS = false;
     }
 
-    let innertubeClient = "WEB_EMBEDDED";
+    let innertubeClient = "ANDROID";
 
     if (cookie) {
         useHLS = false;
