@@ -478,7 +478,7 @@ export default async function (o) {
             urls = audio.uri;
         }
 
-        if (innertubeClient === "WEB_EMBEDDED" && innertube) {
+        if (innertubeClient === "IOS" && innertube) {
             urls = audio.decipher(innertube.session.player);
         }
 
@@ -513,7 +513,7 @@ export default async function (o) {
             filenameAttributes.resolution = `${video.width}x${video.height}`;
             filenameAttributes.extension = codecList[codec].container;
 
-            if (innertubeClient === "WEB_EMBEDDED" && innertube) {
+            if (innertubeClient === "IOS" && innertube) {
                 video = video.decipher(innertube.session.player);
                 audio = audio.decipher(innertube.session.player);
             } else {
