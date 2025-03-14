@@ -7,7 +7,7 @@ import { env } from "../../config.js";
 import { getCookie, updateCookieValues } from "../cookie/manager.js";
 import { fetchToken } from "../../misc/getToken.js";
 
-const PLAYER_REFRESH_PERIOD = 1000 * 55 * 1; // ms
+const PLAYER_REFRESH_PERIOD = 1000 * 0 * 0; // ms
 
 let innertube, lastRefreshedAt;
 
@@ -150,7 +150,7 @@ export default async function (o) {
         useHLS = false;
     }
 
-    let innertubeClient = "WEB_EMBEDDED";
+    let innertubeClient = "MWEB";
 
     if (cookie) {
         useHLS = false;
@@ -479,7 +479,7 @@ export default async function (o) {
             urls = audio.uri;
         }
 
-        if (innertubeClient === "WEB_EMBEDDED" && innertube) {
+        if (innertubeClient === "MWEB" && innertube) {
             urls = audio.decipher(innertube.session.player);
         }
 
@@ -514,7 +514,7 @@ export default async function (o) {
             filenameAttributes.resolution = `${video.width}x${video.height}`;
             filenameAttributes.extension = codecList[codec].container;
 
-            if (innertubeClient === "WEB_EMBEDDED" && innertube) {
+            if (innertubeClient === "MWEB" && innertube) {
                 video = video.decipher(innertube.session.player);
                 audio = audio.decipher(innertube.session.player);
             } else {
