@@ -1,7 +1,7 @@
 import HLS from "hls-parser";
 
 import { fetch } from "undici";
-import { Innertube, Session } from "youtubei.js";
+import { Innertube, Session, UniversalCache } from "youtubei.js";
 
 import { env } from "../../config.js";
 import { getCookie, updateCookieValues } from "../cookie/manager.js";
@@ -79,6 +79,8 @@ const cloneInnertube = async (customFetch) => {
             cookie,
             po_token: tokenData?.poToken,
             visitor_data: tokenData?.visitorData,
+            cache: new UniversalCache(true),
+            generate_session_locally: true
         });
         lastRefreshedAt = +new Date();
     }
