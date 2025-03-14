@@ -5,6 +5,7 @@ import { Innertube, Session } from "youtubei.js";
 
 import { env } from "../../config.js";
 import { getCookie, updateCookieValues } from "../cookie/manager.js";
+import { fetchToken } from "../../misc/getToken.js";
 
 const PLAYER_REFRESH_PERIOD = 1 * 1 * 15; // ms
 
@@ -70,14 +71,14 @@ const cloneInnertube = async (customFetch) => {
     const rawCookie = getCookie('youtube');
     const rawCookieValues = rawCookie?.values();
     const cookie = rawCookie?.toString();
-
+    let tokenData = await fetchToken()
     if (!innertube || shouldRefreshPlayer) {
         innertube = await Innertube.create({
             fetch: customFetch,
-            retrieve_player: false,
+            retrieve_player: true,
             cookie,
-            po_token: rawCookieValues?.po_token,
-            visitor_data: rawCookieValues?.visitor_data,
+            po_token: tokenData?.poToken,
+            visitor_data: tokenData?.visitorData,
         });
         lastRefreshedAt = +new Date();
     }
@@ -149,7 +150,7 @@ export default async function (o) {
         useHLS = false;
     }
 
-    let innertubeClient = "IOS";
+    let innertubeClient = "WEB";
 
     if (cookie) {
         useHLS = false;
@@ -478,7 +479,7 @@ export default async function (o) {
             urls = audio.uri;
         }
 
-        if (innertubeClient === "IOS" && innertube) {
+        if (innertubeClient === "WEB" && innertube) {
             urls = audio.decipher(innertube.session.player);
         }
 
@@ -513,7 +514,7 @@ export default async function (o) {
             filenameAttributes.resolution = `${video.width}x${video.height}`;
             filenameAttributes.extension = codecList[codec].container;
 
-            if (innertubeClient === "IOS" && innertube) {
+            if (innertubeClient === "WEB" && innertube) {
                 video = video.decipher(innertube.session.player);
                 audio = audio.decipher(innertube.session.player);
             } else {
