@@ -7,7 +7,7 @@ import { env } from "../../config.js";
 import { getCookie, updateCookieValues } from "../cookie/manager.js";
 import { fetchToken } from "../../misc/getToken.js";
 
-const PLAYER_REFRESH_PERIOD = 1000 * 0 * 0; // ms
+const PLAYER_REFRESH_PERIOD = 1000 * 30 * 0; // ms
 
 let innertube, lastRefreshedAt;
 
