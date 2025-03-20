@@ -73,7 +73,7 @@ async function handleYoutubeStream(streamInfo, res) {
         }
 
         const size = BigInt(req.headers.get('content-length'));
-        console.log(req.url)
+
         if (req.status !== 200 || !size) {
             return cleanup();
         }
