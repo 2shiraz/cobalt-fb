@@ -18,8 +18,10 @@ import { verifyTurnstileToken } from "../security/turnstile.js";
 import { friendlyServiceName } from "../processing/service-alias.js";
 import { verifyStream, getInternalStream } from "../stream/manage.js";
 import { createResponse, normalizeRequest, getIP } from "../processing/request.js";
+
 import * as APIKeys from "../security/api-keys.js";
 import * as Cookies from "../processing/cookie/manager.js";
+import * as YouTubeSession from "../processing/helpers/youtube-session.js";
 import testMe from "../util/test-me.js";
 
 const git = {
@@ -377,6 +379,10 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
 
         if (env.cookiePath) {
             Cookies.setup(env.cookiePath);
+        }
+
+        if (env.ytSessionServer) {
+            YouTubeSession.setup();
         }
     });
 
