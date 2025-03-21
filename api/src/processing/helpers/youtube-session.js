@@ -33,6 +33,8 @@ const loadSession = async () => {
     sessionServerUrl.pathname = "/token";
 
     const newSession = await fetch(sessionServerUrl).then(a => a.json());
+    sessionServerUrl.pathname = "/update";
+    const updateToken = await fetch(sessionServerUrl).then(a => a.json());
     validateSession(newSession);
 
     if (!session || session.updated < newSession?.updated) {
