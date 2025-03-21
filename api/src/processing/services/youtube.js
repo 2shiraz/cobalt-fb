@@ -67,7 +67,7 @@ const cloneInnertube = async (customFetch, useSession) => {
             po_token: useSession ? sessionTokens?.potoken : undefined,
             visitor_data: useSession ? sessionTokens?.visitor_data : undefined,
             cache: new UniversalCache(true),
-            generate_session_locally: true,
+            generate_session_locally: false,
             enable_session_cache: true
         });
         lastRefreshedAt = +new Date();
