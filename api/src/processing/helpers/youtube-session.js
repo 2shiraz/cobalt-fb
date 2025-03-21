@@ -1,5 +1,5 @@
 import * as cluster from "../../misc/cluster.js";
-
+import { Agent, ProxyAgent, fetch } from 'undici';
 import { env } from "../../config.js";
 import { Green, Yellow } from "../../misc/console-text.js";
 
@@ -29,12 +29,13 @@ const updateSession = (newSession) => {
 }
 
 const loadSession = async () => {
-    const sessionServerUrl = new URL(env.ytSessionServer);
-    sessionServerUrl.pathname = "/token";
+    const newSession = await fetch(`${env.ytSessionServer}token`, {
+        dispatcher: new Agent()
+    }).then(a => a.json());
 
-    const newSession = await fetch(sessionServerUrl).then(a => a.json());
-    sessionServerUrl.pathname = "/update";
-    const updateToken = await fetch(sessionServerUrl).then(a => a.json());
+    const updateToken = await fetch(`${env.ytSessionServer}update`, {
+        dispatcher: new Agent()
+    }).then(a => a.json());
     validateSession(newSession);
 
     if (!session || session.updated < newSession?.updated) {
