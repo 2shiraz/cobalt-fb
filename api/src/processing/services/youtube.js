@@ -7,7 +7,7 @@ import { env } from "../../config.js";
 import { getCookie } from "../cookie/manager.js";
 import { getYouTubeSession } from "../helpers/youtube-session.js";
 
-const PLAYER_REFRESH_PERIOD = 1000 * 60 * 2;
+const PLAYER_REFRESH_PERIOD = 1000 * 45 * 1;
 
 let innertube, lastRefreshedAt;
 
@@ -67,7 +67,6 @@ const cloneInnertube = async (customFetch, useSession) => {
             po_token: useSession ? sessionTokens?.potoken : undefined,
             visitor_data: useSession ? sessionTokens?.visitor_data : undefined,
             cache: new UniversalCache(true),
-            generate_session_locally: false,
             enable_session_cache: true
         });
         lastRefreshedAt = +new Date();
