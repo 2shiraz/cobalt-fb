@@ -38,7 +38,7 @@
         "set-cookie-parser": "2.6.0",
         "undici": "^5.19.1",
         "url-pattern": "1.0.3",
-        "youtubei.js": "github:2shiraz/YouTube.js#main",
+        "youtubei.js": "file:./youtubei.js-13.2.0.tgz",
         "zod": "^3.23.8"
     },
     "optionalDependencies": {
