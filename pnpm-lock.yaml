@@ -56,8 +56,8 @@ importers:
         specifier: 1.0.3
         version: 1.0.3
       youtubei.js:
-        specifier: ^13.2.0
-        version: 13.2.0
+        specifier: file:./youtubei.js-13.2.0.tgz
+        version: file:api/youtubei.js-13.2.0.tgz
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -79,7 +79,7 @@ importers:
         version: 3.3.3
       tsup:
         specifier: ^8.3.0
-        version: 8.3.0(postcss@8.4.47)(typescript@5.5.4)
+        version: 8.3.0(postcss@8.4.47)(typescript@5.5.4)(yaml@2.7.0)
       typescript:
         specifier: ^5.4.5
         version: 5.5.4
@@ -2282,12 +2282,18 @@ packages:
   yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
 
+  yaml@2.7.0:
+    resolution: {integrity: sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA==}
+    engines: {node: '>= 14'}
+    hasBin: true
+
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  youtubei.js@13.2.0:
-    resolution: {integrity: sha512-esbSvWS12Dz/cVlHhnL/PSE84a/mVpQdzwPDIkRQu/NHJVxv0isBUcm3hJnYB1jg1LYvomV0YeOrYv5qWwJREA==}
+  youtubei.js@file:api/youtubei.js-13.2.0.tgz:
+    resolution: {integrity: sha512-g93wm0s3G/iDCYngDNavZdk7zMSvslwjYmF5G/dLq9k/CD7RvgPIp7PSgSB4DywL06cZznMSZer/8aHYW+srUg==, tarball: file:api/youtubei.js-13.2.0.tgz}
+    version: 13.2.0
 
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
@@ -3741,11 +3747,12 @@ snapshots:
 
   pirates@4.0.6: {}
 
-  postcss-load-config@6.0.1(postcss@8.4.47):
+  postcss-load-config@6.0.1(postcss@8.4.47)(yaml@2.7.0):
     dependencies:
       lilconfig: 3.1.2
     optionalDependencies:
       postcss: 8.4.47
+      yaml: 2.7.0
 
   postcss@8.4.47:
     dependencies:
@@ -4108,7 +4115,7 @@ snapshots:
 
   tslib@2.6.3: {}
 
-  tsup@8.3.0(postcss@8.4.47)(typescript@5.5.4):
+  tsup@8.3.0(postcss@8.4.47)(typescript@5.5.4)(yaml@2.7.0):
     dependencies:
       bundle-require: 5.0.0(esbuild@0.23.0)
       cac: 6.7.14
@@ -4119,7 +4126,7 @@ snapshots:
       execa: 5.1.1
       joycon: 3.1.1
       picocolors: 1.1.0
-      postcss-load-config: 6.0.1(postcss@8.4.47)
+      postcss-load-config: 6.0.1(postcss@8.4.47)(yaml@2.7.0)
       resolve-from: 5.0.0
       rollup: 4.24.0
       source-map: 0.8.0-beta.0
@@ -4240,9 +4247,12 @@ snapshots:
   yallist@4.0.0:
     optional: true
 
+  yaml@2.7.0:
+    optional: true
+
   yocto-queue@0.1.0: {}
 
-  youtubei.js@13.2.0:
+  youtubei.js@file:api/youtubei.js-13.2.0.tgz:
     dependencies:
       '@bufbuild/protobuf': 2.2.5
       jintr: 3.2.1
