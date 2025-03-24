@@ -62,7 +62,7 @@ const cloneInnertube = async (customFetch, useSession) => {
     if (!innertube || shouldRefreshPlayer) {
         innertube = await Innertube.create({
             fetch: customFetch,
-            retrieve_player: true,
+            retrieve_player: false,
             cookie,
             po_token: useSession ? sessionTokens?.potoken : undefined,
             visitor_data: useSession ? sessionTokens?.visitor_data : undefined,
