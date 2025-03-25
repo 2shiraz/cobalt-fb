@@ -56,8 +56,8 @@ importers:
         specifier: 1.0.3
         version: 1.0.3
       youtubei.js:
-        specifier: file:./youtubei.js-13.2.0.tgz
-        version: file:api/youtubei.js-13.2.0.tgz
+        specifier: ^13.3.0
+        version: 13.3.0
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -79,7 +79,7 @@ importers:
         version: 3.3.3
       tsup:
         specifier: ^8.3.0
-        version: 8.3.0(postcss@8.4.47)(typescript@5.5.4)(yaml@2.7.0)
+        version: 8.3.0(postcss@8.4.47)(typescript@5.5.4)
       typescript:
         specifier: ^5.4.5
         version: 5.5.4
@@ -1468,8 +1468,8 @@ packages:
     resolution: {integrity: sha512-bZsjR/iRjl1Nk1UkjGpAzLNfQtzuijhn2g+pbZb98HQ1Gk8vM9hfbxeMBP+M2/UUdwj0RqGG3mlvk2MsAqwvEw==}
     engines: {node: 20 || >=22}
 
-  jintr@3.2.1:
-    resolution: {integrity: sha512-yjKUBuwTTg4nc4izMysxuIk0BKh45hnbc1KnXE6LxagIGZn5od+I2elpuRY9IIm3EiKiUZxhxV89a0iX+xoEZg==}
+  jintr@3.3.0:
+    resolution: {integrity: sha512-ZsaajJ4Hr5XR0tSPhOZOTjFhxA0qscKNSOs41NRjx7ZOGwpfdp8NKIBEUtvUPbA37JXyv1sJlgeOOZHjr3h76Q==}
 
   joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
@@ -2282,18 +2282,12 @@ packages:
   yallist@4.0.0:
     resolution: {integrity: sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A==}
 
-  yaml@2.7.0:
-    resolution: {integrity: sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA==}
-    engines: {node: '>= 14'}
-    hasBin: true
-
   yocto-queue@0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  youtubei.js@file:api/youtubei.js-13.2.0.tgz:
-    resolution: {integrity: sha512-g93wm0s3G/iDCYngDNavZdk7zMSvslwjYmF5G/dLq9k/CD7RvgPIp7PSgSB4DywL06cZznMSZer/8aHYW+srUg==, tarball: file:api/youtubei.js-13.2.0.tgz}
-    version: 13.2.0
+  youtubei.js@13.3.0:
+    resolution: {integrity: sha512-tbl7rxltpgKoSsmfGUe9JqWUAzv6HFLqrOn0N85EbTn5DLt24EXrjClnXdxyr3PBARMJ3LC4vbll100a0ABsYw==}
 
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
@@ -3525,7 +3519,7 @@ snapshots:
     dependencies:
       '@isaacs/cliui': 8.0.2
 
-  jintr@3.2.1:
+  jintr@3.3.0:
     dependencies:
       acorn: 8.14.0
 
@@ -3747,12 +3741,11 @@ snapshots:
 
   pirates@4.0.6: {}
 
-  postcss-load-config@6.0.1(postcss@8.4.47)(yaml@2.7.0):
+  postcss-load-config@6.0.1(postcss@8.4.47):
     dependencies:
       lilconfig: 3.1.2
     optionalDependencies:
       postcss: 8.4.47
-      yaml: 2.7.0
 
   postcss@8.4.47:
     dependencies:
@@ -4115,7 +4108,7 @@ snapshots:
 
   tslib@2.6.3: {}
 
-  tsup@8.3.0(postcss@8.4.47)(typescript@5.5.4)(yaml@2.7.0):
+  tsup@8.3.0(postcss@8.4.47)(typescript@5.5.4):
     dependencies:
       bundle-require: 5.0.0(esbuild@0.23.0)
       cac: 6.7.14
@@ -4126,7 +4119,7 @@ snapshots:
       execa: 5.1.1
       joycon: 3.1.1
       picocolors: 1.1.0
-      postcss-load-config: 6.0.1(postcss@8.4.47)(yaml@2.7.0)
+      postcss-load-config: 6.0.1(postcss@8.4.47)
       resolve-from: 5.0.0
       rollup: 4.24.0
       source-map: 0.8.0-beta.0
@@ -4247,15 +4240,12 @@ snapshots:
   yallist@4.0.0:
     optional: true
 
-  yaml@2.7.0:
-    optional: true
-
   yocto-queue@0.1.0: {}
 
-  youtubei.js@file:api/youtubei.js-13.2.0.tgz:
+  youtubei.js@13.3.0:
     dependencies:
       '@bufbuild/protobuf': 2.2.5
-      jintr: 3.2.1
+      jintr: 3.3.0
       tslib: 2.6.3
       undici: 5.28.4
 
