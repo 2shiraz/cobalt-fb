@@ -1,13 +1,13 @@
 import HLS from "hls-parser";
 
 import { fetch } from "undici";
-import { Innertube, Session, UniversalCache } from "youtubei.js";
+import { Innertube, Session } from "youtubei.js";
 
 import { env } from "../../config.js";
 import { getCookie } from "../cookie/manager.js";
 import { getYouTubeSession } from "../helpers/youtube-session.js";
 
-const PLAYER_REFRESH_PERIOD = 1000 * 45 * 1;
+const PLAYER_REFRESH_PERIOD = 1000 * 60 * 1; // ms
 
 let innertube, lastRefreshedAt;
 
@@ -62,7 +62,7 @@ const cloneInnertube = async (customFetch, useSession) => {
     if (!innertube || shouldRefreshPlayer) {
         innertube = await Innertube.create({
             fetch: customFetch,
-            retrieve_player: true,
+            retrieve_player,
             cookie,
             po_token: useSession ? sessionTokens?.potoken : undefined,
             visitor_data: useSession ? sessionTokens?.visitor_data : undefined,
@@ -109,7 +109,7 @@ export default async function (o) {
                 && innertubeClient === "IOS"
                 && (
                     (quality > 1080 && o.format !== "h264")
-                    || o.format === "vp9"
+                    || (quality > 1080 && o.format !== "vp9")
                 )
             )
         );
@@ -406,6 +406,7 @@ export default async function (o) {
     if (video?.drm_families || audio?.drm_families) {
         return { error: "youtube.drm" };
     }
+
     const fileMetadata = {
         title: basicInfo.title.trim(),
         artist: basicInfo.author.replace("- Topic", "").trim()
