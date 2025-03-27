@@ -7,7 +7,7 @@ import { env } from "../../config.js";
 import { getCookie } from "../cookie/manager.js";
 import { getYouTubeSession } from "../helpers/youtube-session.js";
 
-const PLAYER_REFRESH_PERIOD = 1000 * 60 * 1; // ms
+const PLAYER_REFRESH_PERIOD = 1000 * 60 * 5; // ms
 
 let innertube, lastRefreshedAt;
 
