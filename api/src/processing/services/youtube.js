@@ -12,7 +12,7 @@ import { YT } from 'youtubei.js';
 import GoogleVideo, { base64ToU8, PART, Protos, QUALITY } from 'googlevideo';
 import crypto from 'crypto';
 
-const PLAYER_REFRESH_PERIOD = 1000 * 20 * 1; // ms
+const PLAYER_REFRESH_PERIOD = 1000 * 39 * 1; // ms
 
 ////////////////////
 
@@ -359,7 +359,7 @@ const cloneInnertube = async (customFetch, useSession) => {
 
     const sessionTokens = getYouTubeSession();
     const retrieve_player = Boolean(sessionTokens || cookie);
-
+    
     if (useSession && env.ytSessionServer && !sessionTokens?.potoken) {
         throw "no_session_tokens";
     }
@@ -369,8 +369,8 @@ const cloneInnertube = async (customFetch, useSession) => {
             fetch: customFetch,
             retrieve_player: true,
             cookie,
-            po_token: useSession ? sessionTokens?.potoken : undefined,
-            visitor_data: useSession ? sessionTokens?.visitor_data : undefined,
+            po_token: sessionTokens.potoken,
+            visitor_data: sessionTokens.visitor_data
         });
         lastRefreshedAt = +new Date();
     }
