@@ -12,7 +12,7 @@ import { YT } from 'youtubei.js';
 import GoogleVideo, { base64ToU8, PART, Protos, QUALITY } from 'googlevideo';
 import crypto from 'crypto';
 
-const PLAYER_REFRESH_PERIOD = 1000 * 90 * 1; // ms
+const PLAYER_REFRESH_PERIOD = 1000 * 20 * 1; // ms
 
 ////////////////////
 
