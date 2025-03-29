@@ -11,6 +11,7 @@ import { Constants, UniversalCache } from 'youtubei.js';
 import { YT } from 'youtubei.js';
 import GoogleVideo, { base64ToU8, PART, Protos, QUALITY } from 'googlevideo';
 import crypto from 'crypto';
+import { fetchToken } from "../../misc/getToken.js";
 
 const PLAYER_REFRESH_PERIOD = 1000 * 39 * 1; // ms
 
@@ -312,7 +313,7 @@ async function getBasicInfo(innertube, videoId) {
   throw new Error('Player response not found');
 }
 
-///////////////////
+///////////////////////////////////////////////////////////////////
 
 let innertube, lastRefreshedAt;
 
@@ -359,7 +360,7 @@ const cloneInnertube = async (customFetch, useSession) => {
 
     const sessionTokens = getYouTubeSession();
     const retrieve_player = Boolean(sessionTokens || cookie);
-    
+    let token = await fetchToken();
     if (useSession && env.ytSessionServer && !sessionTokens?.potoken) {
         throw "no_session_tokens";
     }
@@ -369,8 +370,8 @@ const cloneInnertube = async (customFetch, useSession) => {
             fetch: customFetch,
             retrieve_player: true,
             cookie,
-            po_token: sessionTokens.potoken,
-            visitor_data: sessionTokens.visitor_data
+            po_token: token.poToken,
+            visitor_data: token.visitorData
         });
         lastRefreshedAt = +new Date();
     }
