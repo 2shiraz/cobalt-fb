@@ -12,7 +12,7 @@ import { YT } from 'youtubei.js';
 import GoogleVideo, { base64ToU8, PART, Protos, QUALITY } from 'googlevideo';
 import crypto from 'crypto';
 
-const PLAYER_REFRESH_PERIOD = 1000 * 35 * 1; // ms
+const PLAYER_REFRESH_PERIOD = 1000 * 90 * 1; // ms
 
 ////////////////////
 
@@ -708,10 +708,10 @@ export default async function (o) {
     if (video?.drm_families || audio?.drm_families) {
         return { error: "youtube.drm" };
     }
-    let reinfo = await yt.getInfo(o.id, 'ANDROID');
+    //let reinfo = await yt.getInfo(o.id, 'ANDROID');
     const fileMetadata = {
-        title: reinfo.primary_info.title.text ? reinfo.primary_info.title.text : "YouTube",
-        artist: basicInfo.author ? basicInfo.author.replace("- Topic", "").trim() : "YouTube"
+        title: "YouTube",
+        artist: "YouTube"
     }
 
     if (basicInfo?.short_description?.startsWith("Provided to YouTube by")) {
