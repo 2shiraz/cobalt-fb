@@ -56,7 +56,7 @@ const env = {
 
     customInnertubeClient: process.env.CUSTOM_INNERTUBE_CLIENT,
     ytSessionServer: process.env.YOUTUBE_SESSION_SERVER,
-    ytSessionReloadInterval: 5,
+    ytSessionReloadInterval: 20,
     ytSessionInnertubeClient: process.env.YOUTUBE_SESSION_INNERTUBE_CLIENT,
 }
 
