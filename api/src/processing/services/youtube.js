@@ -461,7 +461,7 @@ export default async function (o) {
 
         return { error: "fetch.fail" };
     }
-    console.log(info)
+
     if (!info) return { error: "fetch.fail" };
 
     const playability = info.playability_status;
