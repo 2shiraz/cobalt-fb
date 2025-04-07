@@ -129,8 +129,8 @@ async function prepareOnesieRequest(args) {
   const clonedInnerTubeContext = structuredClone(innertube.session.context);
 
   // Change or remove these if you want to use a different client. I chose TVHTML5 purely for testing.
-  clonedInnerTubeContext.client.clientName = Constants.CLIENTS.TV.NAME;
-  clonedInnerTubeContext.client.clientVersion = Constants.CLIENTS.TV.VERSION;
+  clonedInnerTubeContext.client.clientName = Constants.CLIENTS.WEB.NAME;
+  clonedInnerTubeContext.client.clientVersion = Constants.CLIENTS.WEB.VERSION;
   
   const params = {
     playbackContext: {
@@ -715,8 +715,8 @@ export default async function (o) {
     }
     //let reinfo = await yt.getInfo(o.id, 'ANDROID');
     const fileMetadata = {
-        title: "YouTube",
-        artist: "YouTube"
+        title: basicInfo.title.trim(),
+        artist: basicInfo.author.replace("- Topic", "").trim()
     }
 
     if (basicInfo?.short_description?.startsWith("Provided to YouTube by")) {
