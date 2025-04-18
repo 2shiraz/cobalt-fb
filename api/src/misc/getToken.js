@@ -4,7 +4,7 @@ import { Agent, ProxyAgent, fetch } from 'undici';
 export async function fetchToken(retries = 6, delay = 500) {
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
-            const response = await fetch('http://88.99.226.59:5555/');
+            const response = await fetch('https://potoken.yt-dl.click/');
 
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
