@@ -13,7 +13,7 @@ import GoogleVideo, { base64ToU8, PART, Protos, QUALITY } from 'googlevideo';
 import crypto from 'crypto';
 import { fetchToken } from "../../misc/getToken.js";
 
-const PLAYER_REFRESH_PERIOD = 1000 * 60 * 1; // ms
+const PLAYER_REFRESH_PERIOD = 1000 * 20 * 1; // ms
 
 ////////////////////
 
@@ -206,7 +206,7 @@ async function prepareOnesieRequest(args) {
       poToken: poToken ? base64ToU8(poToken) : undefined,
       playbackCookie: undefined,
       clientInfo: {
-        clientName: parseInt(Constants.CLIENT_NAME_IDS.TVHTML5),
+        clientName: parseInt(Constants.CLIENT_NAME_IDS.WEB),
         clientVersion: clonedInnerTubeContext.client.clientVersion
       }
     },
@@ -367,6 +367,7 @@ const cloneInnertube = async (customFetch, useSession) => {
 
     if (!innertube || shouldRefreshPlayer) {
         innertube = await Innertube.create({
+            cache: new UniversalCache(false),
             fetch: customFetch,
             retrieve_player: true,
             cookie,
