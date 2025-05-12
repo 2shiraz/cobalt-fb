@@ -56,7 +56,7 @@ async function handleYoutubeStream(streamInfo, res) {
     const cleanup = () => (res.end(), closeRequest(streamInfo.controller));
 
     try {
-        await wait(1000);
+        //await wait(1000);
         let req, attempts = 8;
         //console.log(streamInfo.url)
         while (attempts--) {
