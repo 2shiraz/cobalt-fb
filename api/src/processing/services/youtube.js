@@ -129,8 +129,8 @@ async function prepareOnesieRequest(args) {
   const clonedInnerTubeContext = structuredClone(innertube.session.context);
 
   // Change or remove these if you want to use a different client. I chose TVHTML5 purely for testing.
-  clonedInnerTubeContext.client.clientName = Constants.CLIENTS.ANDROID.NAME;
-  clonedInnerTubeContext.client.clientVersion = Constants.CLIENTS.ANDROID.VERSION;
+  clonedInnerTubeContext.client.clientName = Constants.CLIENTS.MWEB.NAME;
+  clonedInnerTubeContext.client.clientVersion = Constants.CLIENTS.MWEB.VERSION;
   
   const params = {
     playbackContext: {
@@ -206,7 +206,7 @@ async function prepareOnesieRequest(args) {
       poToken: poToken ? base64ToU8(poToken) : undefined,
       playbackCookie: undefined,
       clientInfo: {
-        clientName: parseInt(Constants.CLIENT_NAME_IDS.ANDROID),
+        clientName: parseInt(Constants.CLIENT_NAME_IDS.MWEB),
         clientVersion: clonedInnerTubeContext.client.clientVersion
       }
     },
