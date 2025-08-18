@@ -54,7 +54,6 @@ function wait(ms) {
 async function handleYoutubeStream(streamInfo, res) {
     const { signal } = streamInfo.controller;
     const cleanup = () => (res.end(), closeRequest(streamInfo.controller));
-
     try {
         //await wait(1000);
         let req, attempts = 8;
