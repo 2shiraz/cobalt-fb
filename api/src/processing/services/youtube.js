@@ -372,7 +372,8 @@ const cloneInnertube = async (customFetch, useSession) => {
             retrieve_player: true,
             cookie,
             po_token: token.poToken,
-            visitor_data: token.visitorData
+            visitor_data: token.visitorData,
+            player_id: "0004de42"
         });
         lastRefreshedAt = +new Date();
     }
