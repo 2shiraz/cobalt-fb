@@ -22,7 +22,7 @@ export default async function testMe(req, res) {
       }),
     });
     if (!response.ok) {
-      return res.status(500).json({ status: 'false', msg: 'cobalt error' });
+      return res.status(500).json({ status: 'false', msg: 'cobalt error', apiResponse: await response.json() });
     }
 
     const data = await response.json();
