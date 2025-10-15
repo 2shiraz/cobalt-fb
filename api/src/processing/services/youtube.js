@@ -372,8 +372,7 @@ const cloneInnertube = async (customFetch, useSession) => {
             retrieve_player: true,
             cookie,
             po_token: token.poToken,
-            visitor_data: token.visitorData,
-            player_id: "0004de42"
+            visitor_data: token.visitorData
         });
         lastRefreshedAt = +new Date();
     }
@@ -765,7 +764,7 @@ export default async function (o) {
         }
 
         if (!clientsWithNoCipher.includes(innertubeClient) && innertube) {
-            urls = audio.decipher(innertube.session.player);
+            urls = await audio.decipher(innertube.session.player);
         }
 
         return {
@@ -800,8 +799,8 @@ export default async function (o) {
             filenameAttributes.extension = codecList[codec].container;
 
             if (!clientsWithNoCipher.includes(innertubeClient) && innertube) {
-                video = video.decipher(innertube.session.player);
-                audio = audio.decipher(innertube.session.player);
+                video = await video.decipher(innertube.session.player);
+                audio = await audio.decipher(innertube.session.player);
             } else {
                 video = video.url;
                 audio = audio.url;
