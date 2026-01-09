@@ -13,7 +13,7 @@ import GoogleVideo, { base64ToU8, PART, Protos, QUALITY } from 'googlevideo';
 import crypto from 'crypto';
 import { fetchToken } from "../../misc/getToken.js";
 
-const PLAYER_REFRESH_PERIOD = 1000 * 10 * 1; // ms
+const PLAYER_REFRESH_PERIOD = 1000 * 100 * 1; // ms
 
 ////////////////////
 
@@ -367,12 +367,14 @@ const cloneInnertube = async (customFetch, useSession) => {
 
     if (!innertube || shouldRefreshPlayer) {
         innertube = await Innertube.create({
-            cache: new UniversalCache(false),
-            fetch: customFetch,
-            retrieve_player: true,
-            cookie,
-            po_token: token.poToken,
-            visitor_data: token.visitorData
+          cache: new UniversalCache(true),
+          fetch: customFetch,
+          enable_session_cache: false,
+          retrieve_innertube_config: false,
+          //retrieve_player: true,
+          cookie,
+          //po_token: token.poToken,
+          visitor_data: token.visitorData,
         });
         lastRefreshedAt = +new Date();
     }
@@ -387,7 +389,7 @@ const cloneInnertube = async (customFetch, useSession) => {
         cookie,
         customFetch ?? innertube.session.http.fetch,
         innertube.session.cache,
-        token.poToken
+        //token.poToken
     );
 
     const yt = new Innertube(session);
