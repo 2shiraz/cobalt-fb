@@ -3,7 +3,7 @@ import { Readable } from "node:stream";
 import { closeRequest, getHeaders, pipe } from "./shared.js";
 import { handleHlsPlaylist, isHlsResponse } from "./internal-hls.js";
 
-const CHUNK_SIZE = BigInt(3e6); // 8 MB
+const CHUNK_SIZE = BigInt(4e6); // 8 MB
 const min = (a, b) => a < b ? a : b;
 
 async function* readChunks(streamInfo, size) {
@@ -20,7 +20,7 @@ async function* readChunks(streamInfo, size) {
             },
             dispatcher: streamInfo.dispatcher,
             signal: streamInfo.controller.signal,
-            maxRedirections: 4
+            maxRedirections: 20
         });
 
         if (chunk.statusCode === 403 && chunksSinceTransplant >= 0 && streamInfo.transplant) {
@@ -56,7 +56,8 @@ async function handleYoutubeStream(streamInfo, res) {
     const cleanup = () => (res.end(), closeRequest(streamInfo.controller));
     try {
         //await wait(1000);
-        let req, attempts = 8;
+        let req, attempts = 20;
+        const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
         //console.log(streamInfo.url)
         while (attempts--) {
             req = await fetch(streamInfo.url, {
@@ -69,6 +70,7 @@ async function handleYoutubeStream(streamInfo, res) {
             streamInfo.url = req.url;
             if (req.status === 403 && streamInfo.transplant) {
                 try {
+                    await delay(300); 
                     await streamInfo.transplant(streamInfo.dispatcher);
                 } catch {
                     break;
