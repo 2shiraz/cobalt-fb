@@ -13,7 +13,7 @@ import GoogleVideo, { base64ToU8, PART, Protos, QUALITY } from 'googlevideo';
 import crypto from 'crypto';
 import { fetchToken } from "../../misc/getToken.js";
 
-const PLAYER_REFRESH_PERIOD = 1000 * 100 * 1; // ms
+const PLAYER_REFRESH_PERIOD = 1000 * 10 * 1; // ms
 
 ////////////////////
 
