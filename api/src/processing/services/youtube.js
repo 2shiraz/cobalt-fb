@@ -367,14 +367,14 @@ const cloneInnertube = async (customFetch, useSession) => {
 
     if (!innertube || shouldRefreshPlayer) {
         innertube = await Innertube.create({
-          cache: new UniversalCache(true),
-          fetch: customFetch,
-          enable_session_cache: false,
-          retrieve_innertube_config: false,
-          //retrieve_player: true,
-          cookie,
-          //po_token: token.poToken,
-          visitor_data: token.visitorData,
+            cache: new UniversalCache(true),
+            fetch: customFetch,
+            enable_session_cache: false,
+            retrieve_innertube_config: false,
+            //retrieve_player: true,
+            cookie,
+            po_token: token.poToken,
+            visitor_data: token.visitorData
         });
         lastRefreshedAt = +new Date();
     }
@@ -389,7 +389,7 @@ const cloneInnertube = async (customFetch, useSession) => {
         cookie,
         customFetch ?? innertube.session.http.fetch,
         innertube.session.cache,
-        //token.poToken
+        token.poToken
     );
 
     const yt = new Innertube(session);
