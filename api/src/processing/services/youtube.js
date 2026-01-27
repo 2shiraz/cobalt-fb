@@ -396,6 +396,13 @@ const cloneInnertube = async (customFetch, useSession) => {
     return yt;
 }
 
+function addCpnQuery(url) {
+        // append query param
+        const urlObj = new URL(url);
+        urlObj.searchParams.set("cpn", "");
+        url = urlObj.toString();
+        return url;
+}
 export default async function (o) {
     const quality = o.quality === "max" ? 9000 : Number(o.quality);
 
@@ -769,6 +776,8 @@ export default async function (o) {
             urls = await audio.decipher(innertube.session.player);
         }
 
+        urls = addCpnQuery(urls);
+
         return {
             type: "audio",
             isAudioOnly: true,
@@ -812,6 +821,9 @@ export default async function (o) {
         filenameAttributes.qualityLabel = `${resolution}p`;
         filenameAttributes.youtubeFormat = codec;
 
+        video = addCpnQuery(video);
+        audio = addCpnQuery(audio);
+        
         return {
             type: "merge",
             urls: [
