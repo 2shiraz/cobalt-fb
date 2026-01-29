@@ -360,7 +360,7 @@ const cloneInnertube = async (customFetch, useSession) => {
 
     const sessionTokens = getYouTubeSession();
     const retrieve_player = Boolean(sessionTokens || cookie);
-    let token = await fetchToken();
+    //let token = await fetchToken();
     if (useSession && env.ytSessionServer && !sessionTokens?.potoken) {
         throw "no_session_tokens";
     }
