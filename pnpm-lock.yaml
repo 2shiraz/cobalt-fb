@@ -38,8 +38,8 @@ importers:
         specifier: ^5.1.0
         version: 5.2.0
       googlevideo:
-        specifier: ^3.0.0
-        version: 3.0.0
+        specifier: ^4.0.4
+        version: 4.0.4
       hls-parser:
         specifier: ^0.10.7
         version: 0.10.9
@@ -1350,8 +1350,8 @@ packages:
   globrex@0.1.2:
     resolution: {integrity: sha512-uHJgbwAMwNFf5mLst7IWLNg14x1CkeqglJb/K3doi4dw6q2IvAAmM/Y81kevy83wP+Sst+nutFTYOGg3d1lsxg==}
 
-  googlevideo@3.0.0:
-    resolution: {integrity: sha512-8LGFjbZFG4RCsyhMbjX2+IlU5Suj94FeQr1JandPSsKfAMrqL08pOoQsBYl/5P+bqIFm0wQEVpKIhm5wpiekwg==}
+  googlevideo@4.0.4:
+    resolution: {integrity: sha512-S/rfuoPBI+qXCEUPJeVhXsHoISMgVhOz8hHSpGWa0OztfHhh+g9EKaEcqAb/+ttO7meoNQNqIy9dfIpz7HPc4g==}
 
   gopd@1.0.1:
     resolution: {integrity: sha512-d65bNlIadxvpb/A2abVdlqKqV563juRnZ1Wtk6s1sIR8uNsXR70xqIzVqxVf1eTqDunwT2MkczEeaezCKTZhwA==}
@@ -3420,7 +3420,7 @@ snapshots:
 
   globrex@0.1.2: {}
 
-  googlevideo@3.0.0:
+  googlevideo@4.0.4:
     dependencies:
       '@bufbuild/protobuf': 2.2.5
 

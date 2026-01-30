@@ -1,319 +1,17 @@
 import HLS from "hls-parser";
 
-import { fetch } from "undici";
-import { Innertube, Session } from "youtubei.js";
+import { Agent, fetch } from "undici";
 
 import { env } from "../../config.js";
 import { getCookie } from "../cookie/manager.js";
 import { getYouTubeSession } from "../helpers/youtube-session.js";
 
-import { Constants, UniversalCache } from 'youtubei.js';
-import { YT } from 'youtubei.js';
-import GoogleVideo, { base64ToU8, PART, Protos, QUALITY } from 'googlevideo';
-import crypto from 'crypto';
-import { fetchToken } from "../../misc/getToken.js";
+
+import Innertube, { Constants, UniversalCache, YT, Session, Platform} from 'youtubei.js';
+
 
 const PLAYER_REFRESH_PERIOD = 1000 * 5 * 1; // ms
 
-////////////////////
-
-async function encryptRequest(clientKey, data) {
-  if (clientKey.length !== 32) throw new Error('Invalid client key length');
-
-  const aesKeyData = clientKey.slice(0, 16);
-  const hmacKeyData = clientKey.slice(16, 32);
-
-  const iv = crypto.getRandomValues(new Uint8Array(16));
-
-  const aesKey = await crypto.subtle.importKey(
-    'raw',
-    aesKeyData,
-    { name: 'AES-CTR', length: 128 },
-    false,
-    ['encrypt']
-  );
-
-  const encrypted = new Uint8Array(
-    await crypto.subtle.encrypt({ name: 'AES-CTR', counter: iv, length: 128 }, aesKey, data)
-  );
-
-  const hmacKey = await crypto.subtle.importKey(
-    'raw',
-    hmacKeyData,
-    { name: 'HMAC', hash: { name: 'SHA-256' } },
-    false,
-    ['sign']
-  );
-
-  const hmac = new Uint8Array(
-    await crypto.subtle.sign('HMAC', hmacKey, new Uint8Array([...encrypted, ...iv]))
-  );
-
-  return { encrypted, hmac, iv };
-}
-async function decryptResponse(iv, hmac, data, clientKeyData) {
-  if (!iv || !hmac || !data || !clientKeyData) throw new Error('Invalid input');
-
-  const aesKey = await crypto.subtle.importKey(
-    'raw',
-    clientKeyData.slice(0, 16),
-    { name: 'AES-CTR', length: 128 },
-    false,
-    ['decrypt']
-  );
-
-  const decryptedData = new Uint8Array(
-    await crypto.subtle.decrypt({ name: 'AES-CTR', counter: iv, length: 128 }, aesKey, data)
-  );
-
-  const hmacKey = await crypto.subtle.importKey(
-    'raw',
-    clientKeyData.slice(16, 32),
-    { name: 'HMAC', hash: { name: 'SHA-256' } },
-    false,
-    ['verify']
-  );
-
-  const isValid = await crypto.subtle.verify(
-    'HMAC',
-    hmacKey,
-    hmac,
-    new Uint8Array([...data, ...iv])
-  );
-
-  if (!isValid) throw new Error('HMAC verification failed');
-
-  return decryptedData;
-}
-
-/**
- * Fetches and parses the YouTube TV client configuration.
- * Configurations from other clients can be used as well. I chose TVHTML5 for its simplicity.
- */
-async function getYouTubeTVClientConfig() {
-  const tvConfigResponse = await fetch('https://www.youtube.com/tv_config?action_get_config=true&client=lb4&theme=cl', {
-    method: 'GET',
-    headers: {
-      'User-Agent': 'Mozilla/5.0 (ChromiumStylePlatform) Cobalt/Version'
-    }
-  });
-
-  const tvConfig = await tvConfigResponse.text();
-  if (!tvConfig.startsWith(')]}'))
-    throw new Error('Invalid response from YouTube TV config endpoint.');
-
-  const tvConfigJson = JSON.parse(tvConfig.slice(4));
-
-  const webPlayerContextConfig = tvConfigJson.webPlayerContextConfig.WEB_PLAYER_CONTEXT_CONFIG_ID_LIVING_ROOM_WATCH;
-  const onesieHotConfig = webPlayerContextConfig.onesieHotConfig;
-
-  const clientKeyData = base64ToU8(onesieHotConfig.clientKey);
-  const encryptedClientKey = base64ToU8(onesieHotConfig.encryptedClientKey);
-  const onesieUstreamerConfig = base64ToU8(onesieHotConfig.onesieUstreamerConfig);
-  const baseUrl = onesieHotConfig.baseUrl;
-
-  return {
-    clientKeyData,
-    encryptedClientKey,
-    onesieUstreamerConfig,
-    baseUrl
-  };
-}
-
-/**
- * Prepares a Onesie request.
- */
-async function prepareOnesieRequest(args) {
-  const { videoId, poToken, clientConfig, innertube } = args;
-  const { clientKeyData, encryptedClientKey, onesieUstreamerConfig } = clientConfig;
-  const clonedInnerTubeContext = structuredClone(innertube.session.context);
-
-  // Change or remove these if you want to use a different client. I chose TVHTML5 purely for testing.
-  clonedInnerTubeContext.client.clientName = Constants.CLIENTS.ANDROID.NAME;
-  clonedInnerTubeContext.client.clientVersion = Constants.CLIENTS.ANDROID.VERSION;
-  
-  const params = {
-    playbackContext: {
-      contentPlaybackContext: {
-        vis: 0,
-        splay: false,
-        lactMilliseconds: '-1',
-        signatureTimestamp: innertube.session.player?.sts
-      }
-    },
-    videoId
-  };
-  
-  if (poToken) {
-    params.serviceIntegrityDimensions = {};
-    params.serviceIntegrityDimensions.poToken = poToken;
-  }
-  
-  const playerRequestJson = {
-    context: clonedInnerTubeContext,
-    ...params
-  };
-
-  const headers = [ {
-    name: 'Content-Type',
-    value: 'application/json'
-  },
-  {
-    name: 'User-Agent',
-    value: innertube.session.context.client.userAgent
-  },
-  {
-    name: 'X-Goog-Visitor-Id',
-    value: innertube.session.context.client.visitorData
-  } ];
-
-  const onesieRequest = Protos.OnesiePlayerRequest.encode({
-    url: 'https://youtubei.googleapis.com/youtubei/v1/player?key=AIzaSyDCU8hByM-4DrUqRUYnGn-3llEO78bcxq8',
-    headers,
-    body: JSON.stringify(playerRequestJson),
-    proxiedByTrustedBandaid: true,
-    skipResponseEncryption: true
-  }).finish();
-
-  const { encrypted, hmac, iv } = await encryptRequest(clientKeyData, onesieRequest);
-
-  const body = Protos.OnesieRequest.encode({
-    urls: [],
-    playerRequest: {
-      encryptedClientKey,
-      encryptedOnesiePlayerRequest: encrypted,
-      /* 
-       * If you want to use an unencrypted player request:
-       * unencryptedOnesiePlayerRequest: onesieRequest, 
-       */
-      enableCompression: false,
-      hmac: hmac,
-      iv: iv,
-      TQ: true,
-      serializeResponseAsJson: true // If false, the response will be serialized as protobuf.
-    },
-    clientAbrState: {
-      timeSinceLastManualFormatSelectionMs: 0,
-      lastManualDirection: 0,
-      lastManualSelectedResolution: QUALITY.HD720,
-      stickyResolution: QUALITY.HD720,
-      playerTimeMs: 0,
-      visibility: 0
-    },
-    streamerContext: {
-      field5: [],
-      field6: [],
-      poToken: poToken ? base64ToU8(poToken) : undefined,
-      playbackCookie: undefined,
-      clientInfo: {
-        clientName: parseInt(Constants.CLIENT_NAME_IDS.ANDROID),
-        clientVersion: clonedInnerTubeContext.client.clientVersion
-      }
-    },
-    bufferedRanges: [],
-    onesieUstreamerConfig
-  }).finish();
-
-  const videoIdBytes = base64ToU8(videoId);
-  const encodedVideoIdChars = [];
-
-  for (const byte of videoIdBytes) {
-    encodedVideoIdChars.push(byte.toString(16).padStart(2, '0'));
-  }
-
-  const encodedVideoId = encodedVideoIdChars.join('');
-
-  return { body, encodedVideoId };
-}
-
-/**
- * Fetches basic video info (streaming data, video details, etc.) using a Onesie request (/initplayback).
- */
-async function getBasicInfo(innertube, videoId) {
-  const redirectorResponse = await fetch(`https://redirector.googlevideo.com/initplayback?source=youtube&itag=0&pvi=0&pai=0&owc=yes&cmo:sensitive_content=yes&alr=yes&id=${Math.round(Math.random() * 1E5)}`, { method: 'GET' });
-  const redirectorResponseUrl = await redirectorResponse.text();
-
-  if (!redirectorResponseUrl.startsWith('https://'))
-    throw new Error('Invalid redirector response');
-
-  const clientConfig = await getYouTubeTVClientConfig();
-  const onesieRequest = await prepareOnesieRequest({ videoId, /* If needed - poToken,*/ clientConfig, innertube });
-
-  let url = `${redirectorResponseUrl.split('/initplayback')[0]}${clientConfig.baseUrl}`;
-
-  const queryParams = [];
-  queryParams.push(`id=${onesieRequest.encodedVideoId}`);
-  queryParams.push('opr=1');
-  queryParams.push('por=1');
-  queryParams.push('rn=1');
-  queryParams.push('cmo:sensitive_content=yes');
-
-  url += `&${queryParams.join('&')}`;
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'accept': '*/*',
-      'content-type': 'text/plain'
-    },
-    referrer: 'https://www.youtube.com/',
-    body: onesieRequest.body
-  });
-
-  const arrayBuffer = await response.arrayBuffer();
-  const googUmp = new GoogleVideo.UMP(new GoogleVideo.ChunkedDataBuffer([ new Uint8Array(arrayBuffer) ]));
-
-  const onesie = [];
-
-  googUmp.parse((part) => {
-    const data = part.data.chunks[0];
-    switch (part.type) {
-      case PART.SABR_ERROR:
-        console.log('[SABR_ERROR]:', Protos.SabrError.decode(data));
-        break;
-      case PART.ONESIE_HEADER:
-        onesie.push(Protos.OnesieHeader.decode(data));
-        break;
-      case PART.ONESIE_DATA:
-        onesie[onesie.length - 1].data = data;
-        break;
-      default:
-        break;
-    }
-  });
-
-  const onesiePlayerResponse = onesie.find((header) => header.type === Protos.OnesieHeaderType.PLAYER_RESPONSE);
-
-  if (onesiePlayerResponse) {
-    if (!onesiePlayerResponse.cryptoParams)
-      throw new Error('Crypto params not found');
-
-    const iv = onesiePlayerResponse.cryptoParams.iv;
-    const hmac = onesiePlayerResponse.cryptoParams.hmac;
-
-    // If skipResponseEncryption is set to true in the request, the response will not be encrypted.
-    const decryptedData = hmac?.length && iv?.length ? await decryptResponse(iv, hmac, onesiePlayerResponse.data, clientConfig.clientKeyData) : onesiePlayerResponse.data;
-    const response = Protos.OnesiePlayerResponse.decode(decryptedData);
-
-    if (response.onesieProxyStatus !== Protos.OnesieProxyStatus.ONESIE_PROXY_STATUS_OK)
-      throw new Error('Onesie proxy status not OK');
-
-    if (response.httpStatus !== 200)
-      throw new Error('Http status not OK');
-
-    const playerResponse = {
-      success: true,
-      status_code: 200,
-      data: JSON.parse(new TextDecoder().decode(response.body))
-    };
-
-    return new YT.VideoInfo([ playerResponse ], innertube.actions, '');
-  }
-
-  throw new Error('Player response not found');
-}
-
-///////////////////////////////////////////////////////////////////
 
 let innertube, lastRefreshedAt;
 
@@ -403,6 +101,34 @@ function addCpnQuery(url) {
         url = urlObj.toString();
         return url;
 }
+
+async function getStreamingDataFromExternalProvider(videoId, innertube) {
+  const req = await fetch('http://127.0.0.1:8282/companion/youtubei/v1/player', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer abc123abc123abc1'
+    },
+    body: JSON.stringify({ videoId }),
+    dispatcher: new Agent()
+  });
+  
+  if (!req.ok) {
+    throw new Error(`Failed to fetch streaming data for video ${videoId}: ${req.statusText}`);
+  }
+  
+  const data = await req.json();
+  
+  const playerResponse = {
+    success: true,
+    status_code: 200,
+    data: data
+  };
+
+  const videoInfo = new YT.VideoInfo([playerResponse], innertube.actions, '');
+  
+  return videoInfo;
+}
 export default async function (o) {
     const quality = o.quality === "max" ? 9000 : Number(o.quality);
 
@@ -456,31 +182,33 @@ export default async function (o) {
     }
 
     let info;
-    try {
-        info = await getBasicInfo(yt, o.id);
-        //info = await yt.getBasicInfo(o.id, innertubeClient)
-    } catch (e) {
-        if (e?.info) {
-            let errorInfo;
-            try { errorInfo = JSON.parse(e?.info); } catch {}
+    // try {
+    //     info = await getBasicInfo(yt, o.id);
+    //     //info = await yt.getBasicInfo(o.id, innertubeClient)
+    // } catch (e) {
+    //     if (e?.info) {
+    //         let errorInfo;
+    //         try { errorInfo = JSON.parse(e?.info); } catch {}
 
-            if (errorInfo?.reason === "This video is private") {
-                return { error: "content.video.private" };
-            }
-            if (["INVALID_ARGUMENT", "UNAUTHENTICATED"].includes(errorInfo?.error?.status)) {
-                return { error: "youtube.api_error" };
-            }
-        }
+    //         if (errorInfo?.reason === "This video is private") {
+    //             return { error: "content.video.private" };
+    //         }
+    //         if (["INVALID_ARGUMENT", "UNAUTHENTICATED"].includes(errorInfo?.error?.status)) {
+    //             return { error: "youtube.api_error" };
+    //         }
+    //     }
 
-        if (e?.message === "This video is unavailable") {
-            return { error: "content.video.unavailable" };
-        }
+    //     if (e?.message === "This video is unavailable") {
+    //         return { error: "content.video.unavailable" };
+    //     }
 
-        return { error: "fetch.fail" };
-    }
-    
+    //     return { error: "fetch.fail" };
+    // }
+    info = await getStreamingDataFromExternalProvider(o.id, innertube);
+
+
     if (!info) return { error: "fetch.fail" };
-
+    
     const playability = info.playability_status;
     const basicInfo = info.basic_info;
 
@@ -640,7 +368,7 @@ export default async function (o) {
         const checkFormat = (format, pCodec) => format.content_length &&
             (format.mime_type.includes(codecList[pCodec].videoCodec)
                 || format.mime_type.includes(codecList[pCodec].audioCodec));
-
+        
         // sort formats & weed out bad ones
         info.streaming_data.adaptive_formats.sort((a, b) =>
             Number(b.bitrate) - Number(a.bitrate)
@@ -664,7 +392,7 @@ export default async function (o) {
                 }
             })
         });
-
+        
         const noBestMedia = () => {
             const vid = sorted_formats[codec]?.bestVideo;
             const aud = sorted_formats[codec]?.bestAudio;
@@ -685,7 +413,7 @@ export default async function (o) {
         }
 
         audio = sorted_formats[codec].bestAudio;
-        
+
         if (audio?.audio_track && !audio?.is_original) {
             audio = sorted_formats[codec].audio.find(i =>
                 i?.is_original
@@ -725,6 +453,7 @@ export default async function (o) {
     if (video?.drm_families || audio?.drm_families) {
         return { error: "youtube.drm" };
     }
+        
     //let reinfo = await yt.getInfo(o.id, 'ANDROID');
     const fileMetadata = {
         title: basicInfo.title.trim(),
