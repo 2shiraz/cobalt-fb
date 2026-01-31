@@ -103,7 +103,7 @@ function addCpnQuery(url) {
 }
 
 async function getStreamingDataFromExternalProvider(videoId, innertube) {
-  const req = await fetch('http://195.160.220.18:8282/companion/youtubei/v1/player', {
+  const req = await fetch('http://127.0.0.1:8282/companion/youtubei/v1/player', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
