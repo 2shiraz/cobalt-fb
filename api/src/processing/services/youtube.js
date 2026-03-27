@@ -10,7 +10,7 @@ import { getYouTubeSession } from "../helpers/youtube-session.js";
 import Innertube, { Constants, UniversalCache, YT, Session, Platform} from 'youtubei.js';
 
 
-const PLAYER_REFRESH_PERIOD = 1000 * 60 * 30; // ms
+const PLAYER_REFRESH_PERIOD = 1000 * 1 * 25; // ms
 
 
 let innertube, lastRefreshedAt;
@@ -69,7 +69,7 @@ const cloneInnertube = async (customFetch, useSession) => {
             fetch: customFetch,
             enable_session_cache: false,
             retrieve_innertube_config: false,
-            //player_id: 'ecc3e9a7',
+            player_id: 'f85ea353',
             retrieve_player: false,
             cookie,
             //po_token: token.poToken,
