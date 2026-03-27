@@ -10,7 +10,7 @@ import { getYouTubeSession } from "../helpers/youtube-session.js";
 import Innertube, { Constants, UniversalCache, YT, Session, Platform} from 'youtubei.js';
 
 
-const PLAYER_REFRESH_PERIOD = 1000 * 5 * 1; // ms
+const PLAYER_REFRESH_PERIOD = 1000 * 60 * 6; // ms
 
 
 let innertube, lastRefreshedAt;
