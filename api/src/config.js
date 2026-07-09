@@ -35,6 +35,8 @@ const env = {
         && process.env.PROCESSING_PRIORITY
         && parseInt(process.env.PROCESSING_PRIORITY),
 
+    proxyUsername: process.env.PROXY_USERNAME,
+    proxyPassword: process.env.PROXY_PASSWORD,
     externalProxy: process.env.API_EXTERNAL_PROXY,
 
     turnstileSitekey: process.env.TURNSTILE_SITEKEY,

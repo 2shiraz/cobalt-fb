@@ -2,9 +2,10 @@ import HLS from "hls-parser";
 
 import { Agent, fetch } from "undici";
 
-import { env } from "../../config.js";
+import { cobaltUserAgent, env } from "../../config.js";
 import { getCookie } from "../cookie/manager.js";
 import { getYouTubeSession } from "../helpers/youtube-session.js";
+import { createSessionProxyAgent, getSessionProxyUsername } from "../helpers/proxy-agent.js";
 
 
 import Innertube, { Constants, UniversalCache, YT, Session, Platform} from 'youtubei.js';
@@ -102,7 +103,66 @@ function addCpnQuery(url) {
         url = urlObj.toString();
         return url;
 }
+async function reportBannedIp(reason, videoId, dispatcher) {
+    if (!env.externalProxy || !env.proxyUsername || !env.proxyPassword) {
+        return null;
+    }
 
+    try {
+        const proxyUrl = new URL(env.externalProxy);
+        const krakenApi = new URL('/api/ip/ban', proxyUrl);
+        krakenApi.port = '5680';
+        krakenApi.username = '';
+        krakenApi.password = '';
+
+        const ipDispatcher = dispatcher ?? createSessionProxyAgent(videoId);
+        const IP_CHECK_API = 'https://api64.ipify.org?format=json';
+        const req = await fetch(IP_CHECK_API, {
+            dispatcher: ipDispatcher
+        });
+
+        if (!req.ok) {
+            throw new Error(`Failed to fetch IP address: ${req.statusText}`);
+        }
+
+        const data = await req.json();
+        const ipAddress = data.ip;
+
+        if (!ipAddress) {
+            return null;
+        }
+
+        const payload = {
+            ip: ipAddress,
+            reason,
+            reporter: 'Cobalt-exact/youtube',
+            duration: 864000,
+            severity: "permanent"
+        };
+
+        const credentials = Buffer.from(`${env.proxyUsername}:${env.proxyPassword}`).toString('base64');
+        const report = await fetch(krakenApi, {
+            method: "POST",
+            headers: {
+                accept: "*/*",
+                "content-type": "application/json",
+                authorization: `Basic ${credentials}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!report.ok) {
+            throw new Error(`Failed to report banned IP: ${report.statusText}`);
+        }
+
+        //console.log(`Reported banned IP ${ipAddress} for video ${videoId}`);
+        return await report.json().catch(() => null);
+    }
+    catch (e) {
+        console.error(`Failed to report banned IP for video ${videoId}: ${e.message}`);
+        return null;
+    }
+}
 async function getStreamingDataFromExternalProvider(videoId, innertube) {
   const req = await fetch('http://127.0.0.1:8282/companion/youtubei/v1/player', {
     method: 'POST',
@@ -131,6 +191,15 @@ async function getStreamingDataFromExternalProvider(videoId, innertube) {
   return videoInfo;
 }
 export default async function (o) {
+    const proxySessionId = o.proxySessionId ?? o.id;
+    const proxyAgent = createSessionProxyAgent(proxySessionId);
+    const proxyUsername = getSessionProxyUsername(proxySessionId);
+    const dispatcher = proxyAgent ?? o.dispatcher;
+
+    if (proxyUsername) {
+        //console.log(`Using proxy session ${proxyUsername}`);
+    }
+
     const quality = o.quality === "max" ? 9000 : Number(o.quality);
 
     let useHLS = o.youtubeHLS;
@@ -168,7 +237,7 @@ export default async function (o) {
         yt = await cloneInnertube(
             (input, init) => fetch(input, {
                 ...init,
-                dispatcher: o.dispatcher
+                dispatcher
             }),
             useSession
         );
@@ -215,6 +284,7 @@ export default async function (o) {
 
     switch (playability.status) {
         case "LOGIN_REQUIRED":
+            void reportBannedIp("LOGIN_REQUIRED", o.id, dispatcher);
             if (playability.reason.endsWith("bot")) {
                 return { error: "youtube.login" }
             }
@@ -279,7 +349,7 @@ export default async function (o) {
         }
 
         const fetchedHlsManifest = await fetch(hlsManifest, {
-            dispatcher: o.dispatcher,
+            dispatcher,
         }).then(r => {
             if (r.status === 200) {
                 return r.text();
@@ -489,6 +559,7 @@ export default async function (o) {
     const originalRequest = {
         ...o,
         dispatcher: undefined,
+        proxySessionId,
         itag,
         innertubeClient
     };

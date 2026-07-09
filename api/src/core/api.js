@@ -1,7 +1,6 @@
 import cors from "cors";
 import http from "node:http";
 import rateLimit from "express-rate-limit";
-import { setGlobalDispatcher, ProxyAgent } from "undici";
 import { getCommit, getBranch, getRemote, getVersion } from "@imput/version-info";
 
 import jwt from "../security/jwt.js";
@@ -342,14 +341,6 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
 
     randomizeCiphers();
     setInterval(randomizeCiphers, 1000 * 60 * 30); // shuffle ciphers every 30 minutes
-
-    if (env.externalProxy) {
-        if (env.freebindCIDR) {
-            throw new Error('Freebind is not available when external proxy is enabled')
-        }
-
-        setGlobalDispatcher(new ProxyAgent(env.externalProxy))
-    }
 
     http.createServer(app).listen({
         port: env.apiPort,

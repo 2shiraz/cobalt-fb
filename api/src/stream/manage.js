@@ -10,6 +10,7 @@ import { closeRequest } from "./shared.js";
 import { decryptStream, encryptStream } from "../misc/crypto.js";
 import { hashHmac } from "../security/secrets.js";
 import { zip } from "../misc/utils.js";
+import { createSessionProxyAgent } from "../processing/helpers/proxy-agent.js";
 
 // optional dependency
 const freebind = env.freebindCIDR && await import('freebind').catch(() => {});
@@ -78,7 +79,7 @@ export function createInternalStream(url, obj = {}) {
     assert(typeof url === 'string');
 
     let dispatcher = obj.dispatcher;
-    if (obj.requestIP) {
+    if (!dispatcher && obj.requestIP) {
         dispatcher = freebind?.dispatcherFromIP(obj.requestIP, { strict: false })
     }
 
@@ -196,6 +197,12 @@ function wrapStream(streamInfo) {
 
     if (streamInfo.originalRequest) {
         streamInfo.transplant = transplantTunnel.bind(streamInfo);
+    }
+
+    if (!streamInfo.dispatcher && streamInfo.service === 'youtube') {
+        const proxySessionId = streamInfo.originalRequest?.proxySessionId
+            ?? streamInfo.originalRequest?.id;
+        streamInfo.dispatcher = createSessionProxyAgent(proxySessionId);
     }
 
     if (typeof url === 'string') {
