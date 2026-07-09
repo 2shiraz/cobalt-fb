@@ -284,8 +284,8 @@ export default async function (o) {
 
     switch (playability.status) {
         case "LOGIN_REQUIRED":
-            void reportBannedIp("LOGIN_REQUIRED", o.id, dispatcher);
             if (playability.reason.endsWith("bot")) {
+                void reportBannedIp("LOGIN_REQUIRED", o.id, dispatcher);
                 return { error: "youtube.login" }
             }
             if (playability.reason.endsWith("age") || playability.reason.endsWith("inappropriate for some users.")) {
