@@ -11,7 +11,7 @@ import { createSessionProxyAgent, getSessionProxyUsername } from "../helpers/pro
 import Innertube, { Constants, UniversalCache, YT, Session, Platform} from 'youtubei.js';
 
 
-const PLAYER_REFRESH_PERIOD = 1000 * 60 * 60; // ms
+const PLAYER_REFRESH_PERIOD = 1000 * 1 * 15; // ms
 
 
 let innertube, lastRefreshedAt;
