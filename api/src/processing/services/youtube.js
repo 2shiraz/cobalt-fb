@@ -11,7 +11,7 @@ import { createSessionProxyAgent, getSessionProxyUsername } from "../helpers/pro
 import Innertube, { Constants, UniversalCache, YT, Session, Platform} from 'youtubei.js';
 
 
-const PLAYER_REFRESH_PERIOD = 1000 * 60 * 6; // ms
+const PLAYER_REFRESH_PERIOD = 1000 * 60 * 60; // ms
 
 
 let innertube, lastRefreshedAt;
@@ -70,6 +70,7 @@ const cloneInnertube = async (customFetch, useSession) => {
             fetch: customFetch,
             enable_session_cache: false,
             retrieve_innertube_config: false,
+            client_type: "ANDROID_VR",
             //player_id: 'ecc3e9a7',
             retrieve_player: false,
             cookie,
