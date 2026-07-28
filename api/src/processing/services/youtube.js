@@ -237,7 +237,7 @@ export default async function (o) {
         yt = await cloneInnertube(
             (input, init) => fetch(input, {
                 ...init,
-                dispatcher
+                dispatcher: new Agent(),
             }),
             useSession
         );
