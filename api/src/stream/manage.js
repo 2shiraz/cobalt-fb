@@ -10,7 +10,11 @@ import { closeRequest } from "./shared.js";
 import { decryptStream, encryptStream } from "../misc/crypto.js";
 import { hashHmac } from "../security/secrets.js";
 import { zip } from "../misc/utils.js";
-import { createSessionProxyAgent } from "../processing/helpers/proxy-agent.js";
+import {
+    createSessionProxyAgent,
+    releaseSessionProxyAgent,
+    retainSessionProxyAgent
+} from "../processing/helpers/proxy-agent.js";
 
 // optional dependency
 const freebind = env.freebindCIDR && await import('freebind').catch(() => {});
@@ -96,6 +100,8 @@ export function createInternalStream(url, obj = {}) {
         headers = new Map(Object.entries(obj.headers));
     }
 
+    retainSessionProxyAgent(dispatcher);
+
     internalStreamCache.set(streamID, {
         url,
         service: obj.service,
@@ -132,8 +138,10 @@ export function destroyInternalStream(url) {
     const id = getInternalTunnelId(url);
 
     if (internalStreamCache.has(id)) {
-        closeRequest(getInternalStream(id)?.controller);
+        const streamInfo = getInternalStream(id);
         internalStreamCache.delete(id);
+        closeRequest(streamInfo?.controller);
+        releaseSessionProxyAgent(streamInfo?.dispatcher);
     }
 }
 
