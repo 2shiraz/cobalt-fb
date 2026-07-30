@@ -192,6 +192,9 @@ async function getStreamingDataFromExternalProvider(videoId, innertube) {
   return videoInfo;
 }
 export default async function (o) {
+    if (!o.id || o.id === "" || o.id === "undefined" || o.id === "null") {
+        return { error: "fetch.fail" };
+    }
     const proxySessionId = o.proxySessionId ?? o.id;
     const proxyAgent = createSessionProxyAgent(proxySessionId);
     const proxyUsername = getSessionProxyUsername(proxySessionId);
