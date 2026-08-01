@@ -110,7 +110,7 @@ function addCpnQuery(url) {
         url = urlObj.toString();
         return url;
 }
-async function reportBannedIp(reason, videoId, dispatcher) {
+export async function reportBannedIp(reason, videoId, dispatcher) {
     if (!env.externalProxy || !env.proxyUsername || !env.proxyPassword) {
         return null;
     }
