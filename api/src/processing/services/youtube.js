@@ -202,7 +202,8 @@ async function getStreamingDataFromExternalProvider(videoId, innertube) {
   return videoInfo;
 }
 export default async function (o) {
-    if (!o.id || o.id === "" || o.id === "undefined" || o.id === "null") {
+    //or id is not within a-zA-Z0-9_- and is not 11 characters long
+    if (!o.id || o.id === "" || o.id === "undefined" || o.id === "null" || o.id.length !== 11 || !/^[a-zA-Z0-9_-]+$/.test(o.id)) {
         return { error: "fetch.fail" };
     }
     const proxySessionId = o.proxySessionId ?? o.id;

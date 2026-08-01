@@ -57,7 +57,7 @@ async function handleYoutubeStream(streamInfo, res) {
     const cleanup = () => (res.end(), closeRequest(streamInfo.controller));
     try {
         //await wait(1000);
-        let req, attempts = 5;
+        let req, attempts = 8;
         const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
         //console.log(streamInfo.url)
         while (attempts--) {
@@ -70,10 +70,9 @@ async function handleYoutubeStream(streamInfo, res) {
 
             streamInfo.url = req.url;
             if (req.status === 403 && streamInfo.transplant) {
-                if (attempts >= 2 ) {
-                    //console.log(`Transplanting dispatcher for ${streamInfo.url} due to 403 response...`);
-                    await reportBannedIp('403', null, streamInfo.dispatcher);
-                }
+
+                await reportBannedIp('403', null, streamInfo.dispatcher);
+                
                 try {
                     await delay(300); 
                     await streamInfo.transplant(streamInfo.dispatcher);
