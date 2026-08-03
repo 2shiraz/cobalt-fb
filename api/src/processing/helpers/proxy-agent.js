@@ -26,7 +26,8 @@ const closeDispatcher = (dispatcher) => {
 
 export const getSessionProxyUsername = (sessionId) => {
     if (!sessionId || !env.proxyUsername || !env.proxyPassword) return;
-    return `${sessionId}__${env.proxyUsername}`;
+    const safeProxySessionId = sessionId.replaceAll("_", "-");
+    return `${safeProxySessionId}__${env.proxyUsername}`;
 }
 
 export const createSessionProxyAgent = (sessionId) => {
