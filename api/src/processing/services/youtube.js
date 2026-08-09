@@ -115,6 +115,7 @@ export async function reportBannedIp(reason, videoId, dispatcher) {
         return null;
     }
 
+    const ownsDispatcher = !dispatcher;
     const ipDispatcher = dispatcher ?? createSessionProxyAgent(videoId);
 
     try {
@@ -171,7 +172,9 @@ export async function reportBannedIp(reason, videoId, dispatcher) {
         return null;
     }
     finally {
-        closeSessionProxyAgent(ipDispatcher);
+        if (ownsDispatcher) {
+            closeSessionProxyAgent(ipDispatcher);
+        }
     }
 }
 async function getStreamingDataFromExternalProvider(videoId, innertube) {
