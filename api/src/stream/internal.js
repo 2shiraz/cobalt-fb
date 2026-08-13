@@ -70,17 +70,24 @@ async function handleYoutubeStream(streamInfo, res) {
 
             streamInfo.url = req.url;
             if (req.status === 403 && streamInfo.transplant) {
+                if (streamInfo.didTransplant) {
+                    await reportBannedIp('403', null, streamInfo.dispatcher);
+                    break;
+                }
 
-                await reportBannedIp('403', null, streamInfo.dispatcher);
-                
                 try {
-                    await delay(300); 
+                    streamInfo.didTransplant = true;
+
+                    await delay(300);
                     await streamInfo.transplant(streamInfo.dispatcher);
+
+                    continue; // retry after transplant
                 } catch {
                     break;
                 }
-            } else break;
-        }
+            } else {
+                break;
+            }
 
         const size = BigInt(req.headers.get('content-length'));
 
