@@ -321,6 +321,10 @@ export default async function (o) {
             break;
 
         case "UNPLAYABLE":
+            if (playability.reason.endsWith("bot")) {
+                void reportBannedIp("LOGIN_REQUIRED", o.id, getDispatcher());
+                return { error: "youtube.login" }
+            }
             if (playability?.reason?.endsWith("request limit.")) {
                 return { error: "fetch.rate" }
             }
