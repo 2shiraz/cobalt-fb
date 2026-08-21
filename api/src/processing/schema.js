@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { normalizeURL } from "./url.js";
+import { normalizeIPBind } from "./ip-bind.js";
 
 export const apiSchema = z.object({
     url: z.string()
@@ -9,6 +10,7 @@ export const apiSchema = z.object({
     ipbind: z.string()
            .min(1)
             .max(128)
+            .transform(value => normalizeIPBind(value))
             .optional(),
 
     audioBitrate: z.enum(

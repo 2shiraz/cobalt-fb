@@ -16,7 +16,7 @@ import { randomizeCiphers } from "../misc/randomize-ciphers.js";
 import { verifyTurnstileToken } from "../security/turnstile.js";
 import { friendlyServiceName } from "../processing/service-alias.js";
 import { verifyStream, getInternalStream } from "../stream/manage.js";
-import { createResponse, normalizeRequest, getIP } from "../processing/request.js";
+import { createResponse, normalizeRequest, getIP, isIPInBind } from "../processing/request.js";
 
 import * as APIKeys from "../security/api-keys.js";
 import * as Cookies from "../processing/cookie/manager.js";
@@ -287,8 +287,7 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
         if (!streamInfo?.service) {
             return res.status(streamInfo.status).end();
         }
-        //console.log(`Serving tunnel for ${streamInfo.service} to ${req.header('cf-connecting-ip')} (bound to ${streamInfo.ipbind})`);
-        if (streamInfo.ipbind !== req.header('cf-connecting-ip') && streamInfo.ipbind !== undefined) {
+        if (streamInfo.ipbind && !isIPInBind(req.header('cf-connecting-ip'), streamInfo.ipbind)) {
             return res.sendStatus(403);
         }
         

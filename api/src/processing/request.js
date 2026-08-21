@@ -2,6 +2,9 @@ import ipaddr from "ipaddr.js";
 
 import { createStream } from "../stream/manage.js";
 import { apiSchema } from "./schema.js";
+import { isIPInBind } from "./ip-bind.js";
+
+export { normalizeIPBind, isIPInBind } from "./ip-bind.js";
 
 export function createResponse(responseType, responseData) {
     const internalError = (code) => {
