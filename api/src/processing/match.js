@@ -302,6 +302,7 @@ export default async function({ host, patternMatch, params }) {
             filenameStyle: params.filenameStyle,
             twitterGif: params.twitterGif,
             requestIP,
+            ipbind: params.ipbind,
             audioBitrate: params.audioBitrate,
             alwaysProxy: params.alwaysProxy,
         })

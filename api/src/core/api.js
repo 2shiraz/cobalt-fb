@@ -287,7 +287,11 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
         if (!streamInfo?.service) {
             return res.status(streamInfo.status).end();
         }
-
+        //console.log(`Serving tunnel for ${streamInfo.service} to ${req.header('cf-connecting-ip')} (bound to ${streamInfo.ipbind})`);
+        if (streamInfo.ipbind !== req.header('cf-connecting-ip') && streamInfo.ipbind !== undefined) {
+            return res.sendStatus(403);
+        }
+        
         if (streamInfo.type === 'proxy') {
             streamInfo.range = req.headers['range'];
         }

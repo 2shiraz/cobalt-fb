@@ -6,6 +6,11 @@ export const apiSchema = z.object({
           .min(1)
           .transform(url => normalizeURL(url)),
 
+    ipbind: z.string()
+           .min(1)
+            .max(128)
+            .optional(),
+
     audioBitrate: z.enum(
         ["320", "256", "128", "96", "64", "8"]
     ).default("128"),

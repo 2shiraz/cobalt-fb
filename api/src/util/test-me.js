@@ -15,6 +15,7 @@ export default async function testMe(req, res) {
       },
       body: JSON.stringify({
         url: reqUrl,
+        ipbind: req.ip,
         audioFormat: 'mp3',
         downloadMode: "audio",
         audioBitrate: "320",
@@ -30,6 +31,9 @@ export default async function testMe(req, res) {
 
     const downloadResponse = await fetch(downloadUrl, {
       dispatcher: new Agent(),
+      headers: {
+        'cf-connecting-ip': req.ip,
+      },
     });
     const buffer = await downloadResponse.arrayBuffer();
 

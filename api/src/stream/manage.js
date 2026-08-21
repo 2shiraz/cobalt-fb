@@ -37,6 +37,7 @@ export function createStream(obj) {
             filename: obj.filename,
 
             requestIP: obj.requestIP,
+            ipbind: obj.ipbind,
             headers: obj.headers,
 
             metadata: obj.fileMetadata || false,
