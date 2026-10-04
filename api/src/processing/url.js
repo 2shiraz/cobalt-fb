@@ -6,6 +6,31 @@ import { services } from "./service-config.js";
 import { getRedirectingURL } from "../misc/utils.js";
 import { friendlyServiceName } from "./service-alias.js";
 
+function aliasFacebookURL(url, parts) {
+    if (url.hostname === 'fb.watch') {
+        return new URL(`https://web.facebook.com/_shortLink/${parts[1]}`);
+    }
+
+    const path = url.pathname.replace(/\/$/, '');
+    const query = (key) => url.searchParams.get(key);
+
+    if (['/permalink.php', '/story.php'].includes(path) && query('story_fbid') && query('id')) {
+        return new URL(`https://web.facebook.com/${
+            encodeURIComponent(query('id'))
+        }/posts/${
+            encodeURIComponent(query('story_fbid'))
+        }`);
+    }
+
+    // video.php, video/video.php, video/embed, watch, watch/live
+    const videoId = query('v') || query('video_id');
+    if (videoId) {
+        return new URL(`https://web.facebook.com/user/videos/${encodeURIComponent(videoId)}`);
+    }
+
+    return url;
+}
+
 function aliasURL(url) {
     assert(url instanceof URL);
 
@@ -73,12 +98,7 @@ function aliasURL(url) {
 
         case "facebook":
         case "fb":
-            if (url.searchParams.get('v')) {
-                url = new URL(`https://web.facebook.com/user/videos/${url.searchParams.get('v')}`)
-            }
-            if (url.hostname === 'fb.watch') {
-                url = new URL(`https://web.facebook.com/_shortLink/${parts[1]}`)
-            }
+            url = aliasFacebookURL(url, parts);
             break;
 
         case "ddinstagram":

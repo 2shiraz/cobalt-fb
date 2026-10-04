@@ -66,11 +66,10 @@ export const testers = {
         pattern.id?.length <= 11,
 
     "facebook": pattern =>
-        pattern.shortLink?.length <= 11
-        || pattern.username?.length <= 30
-        || pattern.caption?.length <= 255
-        || pattern.id?.length <= 20 && !pattern.shareType
-        || pattern.id?.length <= 20 && pattern.shareType?.length === 1,
+        pattern.shortLink?.length <= 32
+        || (pattern.shareType?.length === 1 && pattern.shareId?.length <= 32)
+        || (pattern.id?.length <= 20 && (!pattern.caption || pattern.caption.length <= 255))
+        || (pattern.postId?.length <= 140 && pattern.username?.length <= 100),
 
     "bsky": pattern =>
         pattern.user?.length <= 128 && pattern.post?.length <= 128,

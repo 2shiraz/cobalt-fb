@@ -27,8 +27,104 @@
         }
     },
     {
-        "name": "shortlink video",
-        "url": "https://fb.watch/r1K6XHMfGT/",
+        "name": "video.php link",
+        "url": "https://www.facebook.com/video.php?v=274175099429670",
+        "params": {},
+        "expected": {
+            "code": 200,
+            "status": "redirect"
+        }
+    },
+    {
+        "name": "hd video",
+        "url": "https://www.facebook.com/cnn/videos/10155529876156509/",
+        "params": {},
+        "expected": {
+            "code": 200,
+            "status": "redirect"
+        }
+    },
+    {
+        "name": "video with lower quality",
+        "url": "https://www.facebook.com/cnn/videos/10155529876156509/",
+        "params": {
+            "videoQuality": "360"
+        },
+        "expected": {
+            "code": 200,
+            "status": "redirect"
+        }
+    },
+    {
+        "name": "video (audio only)",
+        "url": "https://www.facebook.com/cnn/videos/10155529876156509/",
+        "params": {
+            "downloadMode": "audio"
+        },
+        "expected": {
+            "code": 200,
+            "status": "tunnel"
+        }
+    },
+    {
+        "name": "video (muted)",
+        "url": "https://www.facebook.com/cnn/videos/10155529876156509/",
+        "params": {
+            "downloadMode": "mute"
+        },
+        "expected": {
+            "code": 200,
+            "status": "tunnel"
+        }
+    },
+    {
+        "name": "long video",
+        "url": "https://www.facebook.com/WatchESLOne/videos/359649331226507/",
+        "params": {},
+        "expected": {
+            "code": 200,
+            "status": "redirect"
+        }
+    },
+    {
+        "name": "video posted by numeric user id",
+        "url": "https://www.facebook.com/100033620354545/videos/106560053808006/",
+        "params": {},
+        "expected": {
+            "code": 200,
+            "status": "redirect"
+        }
+    },
+    {
+        "name": "video on locale subdomain",
+        "url": "https://zh-hk.facebook.com/cnn/videos/10155529876156509/",
+        "params": {},
+        "expected": {
+            "code": 200,
+            "status": "redirect"
+        }
+    },
+    {
+        "name": "post with pfbid id",
+        "url": "https://www.facebook.com/attn/posts/pfbid0j1Czf2gGDVqeQ8KiMLFm3pWN8GxsQmeRrVhimWDzMuKQoR8r4b1knNsejELmUgyhl",
+        "params": {},
+        "expected": {
+            "code": 200,
+            "status": "redirect"
+        }
+    },
+    {
+        "name": "permalink.php post",
+        "url": "https://www.facebook.com/permalink.php?story_fbid=pfbid0fqQuVEQyXRa9Dp4RcaTR14KHU3uULHV1EK7eckNXSH63JMuoALsAvVCJ97zAGitil&id=100068861234290",
+        "params": {},
+        "expected": {
+            "code": 200,
+            "status": "redirect"
+        }
+    },
+    {
+        "name": "story.php post",
+        "url": "https://www.facebook.com/story.php?story_fbid=pfbid0Fnzhm8UuzjBYpPMNFzaSpFE9UmLdU4fJN8qTANi1Dmtj5q7DNrL5NERXfsAzDEV7l&id=100073071055552",
         "params": {},
         "expected": {
             "code": 200,
@@ -45,9 +141,28 @@
         }
     },
     {
+        "name": "reel video by page",
+        "url": "https://www.facebook.com/reel/1195289147628387",
+        "params": {},
+        "expected": {
+            "code": 200,
+            "status": "redirect"
+        }
+    },
+    {
+        "name": "shortlink video",
+        "url": "https://fb.watch/r1K6XHMfGT/",
+        "params": {},
+        "expected": {
+            "code": 200,
+            "status": "redirect"
+        }
+    },
+    {
         "name": "shared video link",
         "url": "https://www.facebook.com/share/v/6EJK4Z8EAEAHtz8K/",
         "params": {},
+        "canFail": true,
         "expected": {
             "code": 200,
             "status": "redirect"
@@ -57,9 +172,21 @@
         "name": "shared video link v2",
         "url": "https://web.facebook.com/share/r/JFZfPVgLkiJQmWrr/",
         "params": {},
+        "canFail": true,
         "expected": {
             "code": 200,
             "status": "redirect"
+        }
+    },
+    {
+        "name": "deleted video",
+        "url": "https://www.facebook.com/radiokicksfm/videos/3676516585958356/",
+        "params": {},
+        "canFail": true,
+        "expected": {
+            "code": 400,
+            "status": "error",
+            "errorCode": "error.api.fetch.empty"
         }
     }
 ]

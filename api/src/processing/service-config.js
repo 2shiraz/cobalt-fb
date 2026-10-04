@@ -25,12 +25,14 @@ export const services = {
     facebook: {
         patterns: [
             "_shortLink/:shortLink",
+            "reel/:id",
+            "share/:shareType/:shareId",
             ":username/videos/:caption/:id",
             ":username/videos/:id",
-            "reel/:id",
-            "share/:shareType/:id"
+            ":username/posts/:postId",
         ],
-        subdomains: ["web", "m"],
+        // also covers locale subdomains, such as zh-hk.facebook.com
+        subdomains: "*",
         altDomains: ["fb.watch"],
     },
     instagram: {
